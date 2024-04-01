@@ -76,8 +76,18 @@ function getDayName(date) {
  * Date('2024-02-13T00:00:00Z') => Date('2024-02-16T00:00:00Z')
  * Date('2024-02-16T00:00:00Z') => Date('2024-02-23T00:00:00Z')
  */
-function getNextFriday(/* date */) {
-  throw new Error('Not implemented');
+function getNextFriday(date) {
+  const dayOfWeek = date.getDay();
+  const daysUntilFriday = (5 - dayOfWeek + 7) % 7;
+  const nextFriday = new Date(
+    date.getTime() + daysUntilFriday * 24 * 60 * 60 * 1000
+  );
+
+  if (daysUntilFriday === 0) {
+    nextFriday.setDate(nextFriday.getDate() + 7);
+  }
+
+  return nextFriday;
 }
 
 /**
@@ -156,8 +166,21 @@ function isDateInPeriod(date, period) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* data */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const formattedDate = new Date(date);
+  const offset = formattedDate.getTimezoneOffset();
+  const utcDate = new Date(formattedDate.getTime() + offset * 60 * 1000);
+
+  const day = utcDate.getDate();
+  const month = utcDate.getMonth() + 1;
+  const year = utcDate.getFullYear();
+  let hours = utcDate.getHours();
+  const minutes = utcDate.getMinutes().toString().padStart(2, '0');
+  const seconds = utcDate.getSeconds().toString().padStart(2, '0');
+  const amOrPm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+
+  return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds} ${amOrPm}`;
 }
 
 /**
